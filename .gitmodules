@@ -1,3 +1,6 @@
 [submodule "uarch-configure"]
 	path = uarch-configure
 	url = git@github.com:handong32/uarch-configure.git
+[submodule "tailbench"]
+	path = tailbench
+	url = git@github.com:handong32/tailbench.git
