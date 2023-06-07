@@ -48,8 +48,10 @@ def runLocalCommand(com):
 
 def setITR():
     global GITR
+
+    frames = int(int(GITR)/2)
     #p1 = runRemoteCommand(f"ethtool -C ens1f1np1 rx-frames {GITR} tx-frames {GITR} rx-usecs {GITR} tx-usecs {GITR}", TBENCH_SERVER)
-    p1 = runRemoteCommand(f"ethtool -C ens1f1np1 rx-frames 32 tx-frames 32 rx-usecs {GITR} tx-usecs {GITR}", TBENCH_SERVER)
+    p1 = runRemoteCommand(f"ethtool -C ens1f1np1 rx-frames {frames} tx-frames {frames} rx-usecs {GITR} tx-usecs {GITR}", TBENCH_SERVER)
     p1.communicate()
 
 def setDVFS():

@@ -50,11 +50,11 @@ function runLinuxStatic
     echo "*********** runLinuxStatic FINISHED *************"
 }
 
-function runLinuxDefault
+function runLinuxDynamic
 {
-    echo "********************** runLinuxDefault **********************"
+    echo "********************** runLinuxDynamic **********************"
     echo "mkdir ${currdate}"
-    mkdir ${currdate}
+    #mkdir ${currdate}
 
     for qps in ${MQPS}; do
 	for i in `seq 0 1 $NITERS`; do
@@ -73,16 +73,19 @@ function runLinuxDefault
 	    #ssh ${TBENCH_SERVER} cat /data/rapl_log.log
 
 	    ## retrieve logs
-	    scp -r ${TBENCH_SERVER}:/data/rapl_log.log rapl_${i}_${qps}.log
-	    python ~/bayop/tailbench/utilities/parselats.py lats.bin > lats_${i}_${qps}.log
-	    mv lats.bin lats_${i}_${qps}.bin
-	    rm lats.txt
+	    #scp -r ${TBENCH_SERVER}:/data/rapl_log.log rapl_${i}_${qps}.log
+	    #python ~/bayop/tailbench/utilities/parselats.py lats.bin > lats_${i}_${qps}.log
+	    #mv lats.bin lats_${i}_${qps}.bin
+	    #rm lats.txt
 
-	    mv rapl_${i}_${qps}.log ${currdate}
-	    mv lats_${i}_${qps}.log ${currdate}
-	    mv lats_${i}_${qps}.bin ${currdate}
+	    #mv rapl_${i}_${qps}.log ${currdate}
+	    #mv lats_${i}_${qps}.log ${currdate}
+	    #mv lats_${i}_${qps}.bin ${currdate}
 	    
-	    #tail -n 10 server_rapl_log.log
+	    scp -r ${TBENCH_SERVER}:/data/rapl_log.log server_rapl_log.log
+	    cat server_rapl_log.log
+	    python ~/bayop/tailbench/utilities/parselats.py lats.bin
+	    rm lats.bin lats.txt
 	    echo "########################################################"
 	    echo ""
 	done
