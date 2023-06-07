@@ -9,6 +9,7 @@ export WARMUP=${WARMUP:-"5000"}
 export MAXQ=${MAXQ:-"20000"}
 export MITR=${MITR:-"2"}
 export MDVFS=${MDVFS:-"0c00"}
+export CLIENT2=${CLIENT2:-"192.168.1.2"}
 
 function runLinuxStatic
 {
@@ -16,14 +17,14 @@ function runLinuxStatic
     for qps in ${MQPS}; do
 	for itr in ${MITR}; do
 	    for dvfs in ${MDVFS}; do
-		echo "### python img-dnn.py --qps ${qps} --warmup ${WARMUP} --maxq ${MAXQ} --itr ${itr} --dvfs ${dvfs} ###"
+		echo "### python img-dnn.py --qps ${qps} --warmup ${qps} --maxq ${MAXQ} --itr ${itr} --dvfs ${dvfs} ###"
 
 		## start power logging
 		ssh ${TBENCH_SERVER} sudo systemctl stop rapl_log
 		ssh ${TBENCH_SERVER} sudo rm /data/rapl_log.log
 		ssh ${TBENCH_SERVER} sudo systemctl restart rapl_log
 		
-		python img-dnn.py --qps ${qps} --warmup ${WARMUP} --maxq ${MAXQ} --itr ${itr} --dvfs ${dvfs}
+		python img-dnn.py --qps ${qps} --warmup ${qps} --maxq ${MAXQ} --itr ${itr} --dvfs ${dvfs}
 
 		## stop power logging
 		ssh ${TBENCH_SERVER} sudo systemctl stop rapl_log
@@ -42,6 +43,11 @@ function runLinuxStatic
 		cat server_rapl_log.log
 		python ~/bayop/tailbench/utilities/parselats.py lats.bin
 		rm lats.bin lats.txt
+
+		scp -r ${CLIENT2}:~/lats.bin client2lats.bin
+		python ~/bayop/tailbench/utilities/parselats.py client2lats.bin
+		rm client2lats.bin lats.txt
+		
 		echo "########################################################"
 		echo ""
 	    done
@@ -58,7 +64,7 @@ function runLinuxDynamic
 
     for qps in ${MQPS}; do
 	for i in `seq 0 1 $NITERS`; do
-	    echo "### ${i} python img-dnn.py --qps ${qps} --warmup ${WARMUP} --maxq ${MAXQ} ###"
+	    echo "### ${i} python img-dnn.py --qps ${qps} --warmup ${qps} --maxq ${MAXQ} --nclients 2 ###"
 	    echo ""
 	    
 	    ## start power logging
@@ -66,7 +72,7 @@ function runLinuxDynamic
 	    ssh ${TBENCH_SERVER} sudo rm /data/rapl_log.log
 	    ssh ${TBENCH_SERVER} sudo systemctl restart rapl_log
 
-	    python img-dnn.py --qps ${qps} --warmup ${WARMUP} --maxq ${MAXQ}
+	    python img-dnn.py --qps ${qps} --warmup ${qps} --maxq ${MAXQ} --nclients 2
 
 	    ## stop power logging
 	    ssh ${TBENCH_SERVER} sudo systemctl stop rapl_log
@@ -84,8 +90,15 @@ function runLinuxDynamic
 	    
 	    scp -r ${TBENCH_SERVER}:/data/rapl_log.log server_rapl_log.log
 	    cat server_rapl_log.log
+
 	    python ~/bayop/tailbench/utilities/parselats.py lats.bin
 	    rm lats.bin lats.txt
+
+	    scp -r ${CLIENT2}:~/lats.bin client2lats.bin
+	    python ~/bayop/tailbench/utilities/parselats.py client2lats.bin
+	    rm client2lats.bin lats.txt
+		
+	    #scp -r "192.168.1.2":/data/rapl_log.log server_rapl_log.log
 	    echo "########################################################"
 	    echo ""
 	done
