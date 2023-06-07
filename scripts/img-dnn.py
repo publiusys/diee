@@ -17,6 +17,8 @@ TBENCH_QPS = 1000
 TBENCH_WARMUPREQS = 5000
 TBENCH_MAXREQS = 20000
 TBENCH_NCLIENTS = 1
+GITR = "2"
+GDVFS = "0c00"
 
 def runRemoteCommand(com, server):
     print("ssh", server, com)    
@@ -44,6 +46,18 @@ def runLocalCommand(com):
     #p1 = Popen(list(filter(None, com.strip().split(' '))), stdout=PIPE, stderr=PIPE)
     return p1
 
+def setITR():
+    global GITR
+    #p1 = runRemoteCommand(f"ethtool -C ens1f1np1 rx-frames {GITR} tx-frames {GITR} rx-usecs {GITR} tx-usecs {GITR}", TBENCH_SERVER)
+    p1 = runRemoteCommand(f"ethtool -C ens1f1np1 rx-frames 32 tx-frames 32 rx-usecs {GITR} tx-usecs {GITR}", TBENCH_SERVER)
+    p1.communicate()
+
+def setDVFS():
+    global GDVFS
+    s = "0x10000"+GDVFS
+    p1 = runRemoteCommand(f"wrmsr -a 0x199 {s}", TBENCH_SERVER)
+    p1.communicate()
+    
 def run():
     global TBENCH_QPS
     global TBENCH_WARMUPREQS
@@ -71,6 +85,9 @@ if __name__ == '__main__':
     parser.add_argument("--warmup", help="Warmup requests")
     parser.add_argument("--maxq", help="Max requests")
     parser.add_argument("--nclients", help="Number of clients")
+    parser.add_argument("--itr", help="2, 4, etc")
+    parser.add_argument("--dvfs", help="0c00 ... 1800")
+    
 
     args = parser.parse_args()
     numTrials = 30
@@ -82,6 +99,13 @@ if __name__ == '__main__':
         TBENCH_MAXREQS = int(args.maxq)
     if args.nclients:
         TBENCH_NCLIENTS = int(args.nclients)
-    print(f"TBENCH_WARMUPREQS={TBENCH_WARMUPREQS} TBENCH_MAXREQS={TBENCH_MAXREQS} TBENCH_NCLIENTS={TBENCH_NCLIENTS} TBENCH_QPS={TBENCH_QPS} TBENCH_SERVER={TBENCH_SERVER}")
+    if args.itr:
+        GITR = args.itr
+        setITR()
+    if args.dvfs:
+        GDVFS = args.dvfs
+        setDVFS()
+        
+    print(f"TBENCH_WARMUPREQS={TBENCH_WARMUPREQS} TBENCH_MAXREQS={TBENCH_MAXREQS} TBENCH_NCLIENTS={TBENCH_NCLIENTS} TBENCH_QPS={TBENCH_QPS} TBENCH_SERVER={TBENCH_SERVER} GITR={GITR} GDVFS={GDVFS}")
     
     run()
