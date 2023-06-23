@@ -365,10 +365,16 @@ def img_dnn_eval_func(params):
 
     with open(server_rapl) as file:
         server_rapl_log = [float(line.rstrip()) for line in file]
-    assert len(server_rapl_log) > 25
-    
-    print("server_rapl_log[15:25]: ", server_rapl_log[15:25])
-    print("avg_watts ", mean(server_rapl_log[15:25]))
+    #assert len(server_rapl_log) > 25
+
+    joules = 0.0
+    if len(server_rapl_log) > 25:
+        print("server_rapl_log[15:25]: ", server_rapl_log[15:25])
+        print("avg_watts ", mean(server_rapl_log[15:25]))
+        joules = mean(server_rapl_log[15:25])
+    else:
+        # faulty run
+        joules = 9999999.0
 
     with open(client1lats) as file:
         for line in file:
@@ -385,8 +391,7 @@ def img_dnn_eval_func(params):
                 LATENCIES["99"] = float((line.rstrip().split(" "))[3]) * 1000.0
 
     print(LATENCIES)
-
-    joules = mean(server_rapl_log[15:25])
+    
     old_joules = joules
     ## if ITR, DVFS results in SLA violation then bump up energy use
     if LATENCIES[percentile_target] > lat_target:
