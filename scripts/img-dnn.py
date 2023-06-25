@@ -12,7 +12,7 @@ import itertools
 import argparse
 import shutil
 
-TBENCH_SERVER = os.getenv('TBENCH_SERVER')
+TBENCH_SERVER = "192.168.1.20"
 TBENCH_QPS = 1000
 TBENCH_WARMUPREQS = 5000
 TBENCH_MAXREQS = 20000
@@ -66,6 +66,11 @@ def run():
     global TBENCH_MAXREQS
     global TBENCH_NCLIENTS
     global TBENCH_SERVER
+
+    ## ensure previous is killed
+    killOut = runRemoteCommand(f"pkill -f img-dnn_server_networked", TBENCH_SERVER)
+    killOut.communicate()
+    time.sleep(1)
     
     serverOut = runRemoteCommand(f"TBENCH_WARMUPREQS={TBENCH_WARMUPREQS} TBENCH_MAXREQS={TBENCH_MAXREQS} TBENCH_NCLIENTS={TBENCH_NCLIENTS} ~/bayop/tailbench/img-dnn/img-dnn_server_networked -r 10 -f /data/tailbench.inputs/img-dnn/models/model.xml -n 100000000", TBENCH_SERVER)
     time.sleep(5)

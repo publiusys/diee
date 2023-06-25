@@ -9,6 +9,7 @@ export MITR=${MITR:-"2"}
 export MDVFS=${MDVFS:-"0c00"}
 ## xl170 MDVFS limits: 0c00 - 1800
 export CLIENT1=${CLIENT1:-"192.168.1.1"}
+export TBENCH_SERVER=${TBENCH_SERVER:-"192.168.1.20"}
 
 MAXQ=$((MQPS*30))
 
