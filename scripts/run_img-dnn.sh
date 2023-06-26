@@ -11,8 +11,6 @@ export MDVFS=${MDVFS:-"0c00"}
 export CLIENT1=${CLIENT1:-"192.168.1.1"}
 export TBENCH_SERVER=${TBENCH_SERVER:-"192.168.1.20"}
 
-
-
 function runOne
 {
     echo ${TBENCH_SERVER} ${MQPS} ${MITR} ${MDVFS} ${CLIENT1}
