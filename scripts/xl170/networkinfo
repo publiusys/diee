@@ -1,0 +1,61 @@
+  *-network:0
+       description: Ethernet interface
+       product: MT27710 Family [ConnectX-4 Lx]
+       vendor: Mellanox Technologies
+       physical id: 0
+       bus info: pci@0000:07:00.0
+       logical name: eno49np0
+       version: 00
+       serial: 98:f2:b3:c8:a8:f4
+       size: 10Gbit/s
+       capacity: 25Gbit/s
+       width: 64 bits
+       clock: 33MHz
+       capabilities: pciexpress vpd msix pm bus_master cap_list rom ethernet physical fibre 1000bt-fd 10000bt-fd 25000bt-fd autonegotiation
+       configuration: autonegotiation=on broadcast=yes driver=mlx5_core driverversion=5.15.0-69-generic duplex=full firmware=14.18.2030 (HP_2690110034) ip=128.110.218.212 latency=0 link=yes multicast=yes speed=10Gbit/s
+       resources: irq:16 memory:98000000-99ffffff memory:39fff700000-39fffefffff
+  *-network:1 DISABLED
+       description: Ethernet interface
+       product: MT27710 Family [ConnectX-4 Lx]
+       vendor: Mellanox Technologies
+       physical id: 0.1
+       bus info: pci@0000:07:00.1
+       logical name: eno50np1
+       version: 00
+       serial: 98:f2:b3:c8:a8:f5
+       capacity: 25Gbit/s
+       width: 64 bits
+       clock: 33MHz
+       capabilities: pciexpress vpd msix pm bus_master cap_list rom ethernet physical fibre 1000bt-fd 10000bt-fd 25000bt-fd autonegotiation
+       configuration: autonegotiation=on broadcast=yes driver=mlx5_core driverversion=5.15.0-69-generic firmware=14.18.2030 (HP_2690110034) latency=0 link=no multicast=yes port=fibre
+       resources: irq:17 memory:9a000000-9bffffff memory:39ffef00000-39fff6fffff
+  *-network:0 DISABLED
+       description: Ethernet interface
+       product: MT27710 Family [ConnectX-4 Lx]
+       vendor: Mellanox Technologies
+       physical id: 0
+       bus info: pci@0000:03:00.0
+       logical name: ens1f0np0
+       version: 00
+       serial: 9c:dc:71:56:fd:d4
+       capacity: 25Gbit/s
+       width: 64 bits
+       clock: 33MHz
+       capabilities: pciexpress vpd msix pm bus_master cap_list rom ethernet physical fibre 1000bt-fd 10000bt-fd 25000bt-fd autonegotiation
+       configuration: autonegotiation=on broadcast=yes driver=mlx5_core driverversion=5.15.0-69-generic firmware=14.18.2030 (HP_2420110034) latency=0 link=no multicast=yes port=fibre
+       resources: irq:16 memory:96000000-97ffffff memory:92b00000-92bfffff
+  *-network:1
+       description: Ethernet interface
+       product: MT27710 Family [ConnectX-4 Lx]
+       vendor: Mellanox Technologies
+       physical id: 0.1
+       bus info: pci@0000:03:00.1
+       logical name: ens1f1np1
+       version: 00
+       serial: 9c:dc:71:56:fd:d5
+       capacity: 25Gbit/s
+       width: 64 bits
+       clock: 33MHz
+       capabilities: pciexpress vpd msix pm bus_master cap_list rom ethernet physical 1000bt-fd 10000bt-fd 25000bt-fd autonegotiation
+       configuration: autonegotiation=off broadcast=yes driver=mlx5_core driverversion=5.15.0-69-generic duplex=full firmware=14.18.2030 (HP_2420110034) ip=192.168.1.10 latency=0 link=yes multicast=yes
+       resources: irq:17 memory:94000000-95ffffff memory:92c00000-92cfffff
