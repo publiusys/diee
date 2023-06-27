@@ -47,10 +47,7 @@ def runLocalCommand(com):
 
 def setITR():
     global GITR
-
-    frames = int(int(GITR)/2)
-    #p1 = runRemoteCommand(f"ethtool -C ens1f1np1 rx-frames {GITR} tx-frames {GITR} rx-usecs {GITR} tx-usecs {GITR}", TBENCH_SERVER)
-    p1 = runRemoteCommand(f"ethtool -C ens1f1np1 rx-frames {frames} tx-frames {frames} rx-usecs {GITR} tx-usecs {GITR}", TBENCH_SERVER)
+    p1 = runRemoteCommand(f"ethtool -C enp3s0f0 rx-usecs {GITR}", TBENCH_SERVER)
     p1.communicate()
 
 def setDVFS():
@@ -61,7 +58,7 @@ def setDVFS():
 
 def run():
     global TARGET_QPS
-
+    
     runRemoteCommandGet("pkill -f mutilate", "192.168.1.1")
     runRemoteCommandGet("pkill -f mutilate", "192.168.1.2")
     runRemoteCommandGet("pkill -f mutilate", "192.168.1.3")
@@ -93,6 +90,12 @@ def run():
         for line in str(out).strip().split("\\n"):
             f.write(line.strip()+"\n")
     f.close()
+
+    runRemoteCommandGet("pkill -f mutilate", "192.168.1.1")
+    runRemoteCommandGet("pkill -f mutilate", "192.168.1.2")
+    runRemoteCommandGet("pkill -f mutilate", "192.168.1.3")
+    runRemoteCommandGet("pkill -f mutilate", "192.168.1.4")
+    time.sleep(1)
     
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
