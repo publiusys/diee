@@ -1,0 +1,74 @@
+  *-network:0
+       description: Ethernet interface
+       product: I350 Gigabit Network Connection
+       vendor: Intel Corporation
+       physical id: 0
+       bus info: pci@0000:02:00.0
+       logical name: eno1
+       version: 01
+       serial: f0:4d:a2:74:07:1c
+       size: 1Gbit/s
+       capacity: 1Gbit/s
+       width: 32 bits
+       clock: 33MHz
+       capabilities: pm msi msix pciexpress bus_master cap_list ethernet physical tp 10bt 10bt-fd 100bt 100bt-fd 1000bt-fd autonegotiation
+       configuration: autonegotiation=on broadcast=yes driver=igb driverversion=5.15.0-69-generic duplex=full firmware=1.57.0 ip=128.110.96.17 latency=0 link=yes multicast=yes port=twisted pair speed=1Gbit/s
+       resources: irq:35 memory:91320000-9133ffff ioport:3020(size=32) memory:91344000-91347fff memory:91348000-91367fff memory:91368000-91387fff
+  *-network:1 DISABLED
+       description: Ethernet interface
+       product: I350 Gigabit Network Connection
+       vendor: Intel Corporation
+       physical id: 0.3
+       bus info: pci@0000:02:00.3
+       logical name: eno2
+       version: 01
+       serial: f0:4d:a2:74:07:1d
+       capacity: 1Gbit/s
+       width: 32 bits
+       clock: 33MHz
+       capabilities: pm msi msix pciexpress bus_master cap_list ethernet physical tp 10bt 10bt-fd 100bt 100bt-fd 1000bt-fd autonegotiation
+       configuration: autonegotiation=on broadcast=yes driver=igb driverversion=5.15.0-69-generic firmware=1.57.0 latency=0 link=no multicast=yes port=twisted pair
+       resources: irq:24 memory:91300000-9131ffff ioport:3000(size=32) memory:91340000-91343fff memory:91388000-913a7fff memory:913a8000-913c7fff
+  *-network:0
+       description: Ethernet interface
+       product: Ethernet 10G 2P X520 Adapter
+       vendor: Intel Corporation
+       physical id: 0
+       bus info: pci@0000:03:00.0
+       logical name: enp3s0f0
+       version: 01
+       serial: a0:36:9f:28:f8:bc
+       size: 10Gbit/s
+       capacity: 10Gbit/s
+       width: 64 bits
+       clock: 33MHz
+       capabilities: pm msi msix pciexpress vpd bus_master cap_list rom ethernet physical fibre 10000bt-fd
+       configuration: autonegotiation=off broadcast=yes driver=ixgbe driverversion=5.15.0-69-generic duplex=full firmware=0x80000430 ip=192.168.1.10 latency=0 link=yes multicast=yes speed=10Gbit/s
+       resources: irq:26 memory:91100000-9117ffff ioport:2020(size=32) memory:91200000-91203fff memory:91280000-912fffff memory:91580000-9167ffff memory:91680000-9177ffff
+  *-network:1 DISABLED
+       description: Ethernet interface
+       product: Ethernet 10G 2P X520 Adapter
+       vendor: Intel Corporation
+       physical id: 0.1
+       bus info: pci@0000:03:00.1
+       logical name: enp3s0f1
+       version: 01
+       serial: a0:36:9f:28:f8:be
+       capacity: 10Gbit/s
+       width: 64 bits
+       clock: 33MHz
+       capabilities: pm msi msix pciexpress vpd bus_master cap_list rom ethernet physical fibre 10000bt-fd
+       configuration: autonegotiation=off broadcast=yes driver=ixgbe driverversion=5.15.0-69-generic firmware=0x80000430 latency=0 link=no multicast=yes
+       resources: irq:89 memory:91180000-911fffff ioport:2000(size=32) memory:91204000-91207fff memory:91500000-9157ffff memory:91780000-9187ffff memory:91880000-9197ffff
+  *-network
+       description: Network controller
+       product: MT27500 Family [ConnectX-3]
+       vendor: Mellanox Technologies
+       physical id: 0
+       bus info: pci@0000:82:00.0
+       version: 00
+       width: 64 bits
+       clock: 33MHz
+       capabilities: pm vpd msix pciexpress bus_master cap_list rom
+       configuration: driver=mlx4_core latency=0
+       resources: irq:33 memory:ec800000-ec8fffff memory:ec000000-ec7fffff
