@@ -1,54 +1,16 @@
 #!/bin/bash
 set -x
 
-export NTRIALS=${NTRIALS:-"60"}
+export NTRIALS=${NTRIALS:-"1"}
+export PERCENTILE=${PERCENTILE:-"99"}
+export LATENCY=${LATENCY:-"5000"}
+export MQPS=${MQPS:-"1000"}
 
-#qps=2000
-#
-#mkdir bayesopt_trials${NTRIALS}_qps${qps}_percentile${percentile}_latency5000
-#time python -u bayesopt.py --trials ${NTRIALS} --qps ${qps} --percentile ${percentile} --latency 5000 > bayesopt_trials${NTRIALS}_qps${qps}_percentile${percentile}_latency5000.log
-#mv *qps*.* bayesopt_trials${NTRIALS}_qps${qps}_percentile${percentile}_latency5000
+newdir="bayesopt_trials${NTRIALS}_qps${MQPS}_percentile${PERCENTILE}_latency${LATENCY}" 
+mkdir ${newdir}
+time python -u bayesopt.py --trials ${NTRIALS} --qps ${MQPS} --percentile ${PERCENTILE} --latency ${LATENCY} > ${newdir}/"${newdir}.log"
+mv *.bin ${newdir}
+mv *.log ${newdir}
+mv *.txt ${newdir}
 
-percentile=99
-qps=1500
-mkdir bayesopt_trials${NTRIALS}_qps${qps}_percentile${percentile}_latency5000
-time python -u bayesopt.py --trials ${NTRIALS} --qps ${qps} --percentile ${percentile} --latency 5000 > bayesopt_trials${NTRIALS}_qps${qps}_percentile${percentile}_latency5000.log
-mv *qps*.* bayesopt_trials${NTRIALS}_qps${qps}_percentile${percentile}_latency5000
-
-qps=2500
-mkdir bayesopt_trials${NTRIALS}_qps${qps}_percentile${percentile}_latency5000
-time python -u bayesopt.py --trials ${NTRIALS} --qps ${qps} --percentile ${percentile} --latency 5000 > bayesopt_trials${NTRIALS}_qps${qps}_percentile${percentile}_latency5000.log
-mv *qps*.* bayesopt_trials${NTRIALS}_qps${qps}_percentile${percentile}_latency5000
-
-qps=3000
-mkdir bayesopt_trials${NTRIALS}_qps${qps}_percentile${percentile}_latency5000
-time python -u bayesopt.py --trials ${NTRIALS} --qps ${qps} --percentile ${percentile} --latency 5000 > bayesopt_trials${NTRIALS}_qps${qps}_percentile${percentile}_latency5000.log
-mv *qps*.* bayesopt_trials${NTRIALS}_qps${qps}_percentile${percentile}_latency5000
-
-echo "**************************************************************"
-qps=1000
-percentile=90
-mkdir bayesopt_trials${NTRIALS}_qps${qps}_percentile${percentile}_latency5000
-time python -u bayesopt.py --trials ${NTRIALS} --qps ${qps} --percentile ${percentile} --latency 5000 > bayesopt_trials${NTRIALS}_qps${qps}_percentile${percentile}_latency5000.log
-mv *qps*.* bayesopt_trials${NTRIALS}_qps${qps}_percentile${percentile}_latency5000
-
-qps=1500
-mkdir bayesopt_trials${NTRIALS}_qps${qps}_percentile${percentile}_latency5000
-time python -u bayesopt.py --trials ${NTRIALS} --qps ${qps} --percentile ${percentile} --latency 5000 > bayesopt_trials${NTRIALS}_qps${qps}_percentile${percentile}_latency5000.log
-mv *qps*.* bayesopt_trials${NTRIALS}_qps${qps}_percentile${percentile}_latency5000
-
-qps=2000
-mkdir bayesopt_trials${NTRIALS}_qps${qps}_percentile${percentile}_latency5000
-time python -u bayesopt.py --trials ${NTRIALS} --qps ${qps} --percentile ${percentile} --latency 5000 > bayesopt_trials${NTRIALS}_qps${qps}_percentile${percentile}_latency5000.log
-mv *qps*.* bayesopt_trials${NTRIALS}_qps${qps}_percentile${percentile}_latency5000
-
-qps=2500
-mkdir bayesopt_trials${NTRIALS}_qps${qps}_percentile${percentile}_latency5000
-time python -u bayesopt.py --trials ${NTRIALS} --qps ${qps} --percentile ${percentile} --latency 5000 > bayesopt_trials${NTRIALS}_qps${qps}_percentile${percentile}_latency5000.log
-mv *qps*.* bayesopt_trials${NTRIALS}_qps${qps}_percentile${percentile}_latency5000
-
-qps=3000
-mkdir bayesopt_trials${NTRIALS}_qps${qps}_percentile${percentile}_latency5000
-time python -u bayesopt.py --trials ${NTRIALS} --qps ${qps} --percentile ${percentile} --latency 5000 > bayesopt_trials${NTRIALS}_qps${qps}_percentile${percentile}_latency5000.log
-mv *qps*.* bayesopt_trials${NTRIALS}_qps${qps}_percentile${percentile}_latency5000
-
+rsync --mkpath -avz ${newdir}/* don:/home/handong/cloudlab/xl170/img-dnn/linux_static/${newdir}/

@@ -17,8 +17,8 @@ TBENCH_QPS = 1000
 TBENCH_WARMUPREQS = 5000
 TBENCH_MAXREQS = 20000
 TBENCH_NCLIENTS = 1
-GITR = "2"
-GDVFS = "0c00"
+GITR = ""
+GDVFS = ""
 
 def runRemoteCommand(com, server):
     print("ssh", server, com)    
