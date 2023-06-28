@@ -72,26 +72,31 @@ def run():
     killOut.communicate()
     time.sleep(1)
     
-    serverOut = runRemoteCommand(f"TBENCH_WARMUPREQS={TBENCH_WARMUPREQS} TBENCH_MAXREQS={TBENCH_MAXREQS} TBENCH_NCLIENTS={TBENCH_NCLIENTS} ~/bayop/tailbench/img-dnn/img-dnn_server_networked -r 10 -f /data/tailbench.inputs/img-dnn/models/model.xml -n 100000000", TBENCH_SERVER)
+    serverOut = runRemoteCommand(f"TBENCH_SERVER_PORT=8080 TBENCH_SERVER={TBENCH_SERVER} TBENCH_WARMUPREQS={TBENCH_WARMUPREQS} TBENCH_MAXREQS={TBENCH_MAXREQS} TBENCH_NCLIENTS={TBENCH_NCLIENTS} ~/bayop/tailbench/img-dnn/img-dnn_server_networked -r 10 -f /data/tailbench.inputs/img-dnn/models/model.xml -n 100000000", TBENCH_SERVER)
     time.sleep(5)
 
     #clientOut1 = runLocalCommand(f"TBENCH_QPS={TBENCH_QPS} ~/bayop/tailbench/img-dnn/img-dnn_client_networked")
-    #time.sleep(1)
     clientOut1 = runRemoteCommand(f"TBENCH_SERVER_PORT=8080 TBENCH_SERVER={TBENCH_SERVER} TBENCH_MNIST_DIR=/data/tailbench.inputs/img-dnn/mnist TBENCH_QPS={TBENCH_QPS} ~/bayop/tailbench/img-dnn/img-dnn_client_networked", "192.168.1.1")
-    time.sleep(1)
+    clientOut2 = runRemoteCommand(f"TBENCH_SERVER_PORT=8080 TBENCH_SERVER={TBENCH_SERVER} TBENCH_MNIST_DIR=/data/tailbench.inputs/img-dnn/mnist TBENCH_QPS={TBENCH_QPS} ~/bayop/tailbench/img-dnn/img-dnn_client_networked", "192.168.1.2")
+    clientOut3 = runRemoteCommand(f"TBENCH_SERVER_PORT=8080 TBENCH_SERVER={TBENCH_SERVER} TBENCH_MNIST_DIR=/data/tailbench.inputs/img-dnn/mnist TBENCH_QPS={TBENCH_QPS} ~/bayop/tailbench/img-dnn/img-dnn_client_networked", "192.168.1.3")
+
+    print("Server Output:")
+    for out in serverOut.communicate():
+        print(str(out.strip()), end=" ")
+    print("")
     
     print("Client1 Output:")
     for out in clientOut1.communicate():
         print(str(out.strip()), end=" ")
     print("")
-    
-    #print("Client2 Output:")
-    #for out in clientOut2.communicate():
-    #    print(str(out.strip()), end=" ")
-    #print("")
-    
-    print("Server Output:")
-    for out in serverOut.communicate():
+
+    print("Client2 Output:")
+    for out in clientOut1.communicate():
+        print(str(out.strip()), end=" ")
+    print("")
+
+    print("Client3 Output:")
+    for out in clientOut1.communicate():
         print(str(out.strip()), end=" ")
     print("")
     
