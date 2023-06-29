@@ -16,6 +16,7 @@ import itertools
 from pprint import pprint
 import pandas as pd
 import os
+import os.path
 from threading import Event, Thread
 from statistics import mean
 
@@ -31,6 +32,7 @@ percentile_target = "99"
 TARGET_QPS=100000
 TIME = 10
 MINLATENCY = False
+TBENCH_SERVER = "192.168.1.20"
 
 LATENCIES1 = {
     "50" : 0.0,
@@ -73,7 +75,8 @@ def int2hexstr(int_in):
     return s2
         
 def runRemoteCommand(com, server):
-    p1 = Popen(["ssh", server, com], stdout=PIPE)
+    print(com, server)
+    p1 = Popen(["ssh", server, com], stdout=PIPE, stderr=PIPE)
     return p1
 
 def runRemoteCommandGet(com, server):
@@ -95,6 +98,83 @@ def runLocalCommand(com):
     p1 = Popen(com, shell=True, stdout=PIPE, stderr=PIPE)
     return p1
 
+def runImgDNN(itr, dvfs):
+    #print(f"MITR={itr} MDVFS={dvfs} MQPS={TARGET_QPS} ./run_img-dnn.sh runOneStatic")
+    p1 = runLocalCommand(f"MITR={itr} MDVFS={dvfs} MQPS={TARGET_QPS} ./run_img-dnn.sh runOneStatic")
+    for out in p1.communicate():
+        for line in str(out).split("\\n"):
+            print(line.strip())
+            
+    name=f"qps{TARGET_QPS}_itr{itr}_dvfs{dvfs}"
+    server_rapl = f"server_rapl_{name}.log"
+    client1lats = f"client1lats_{name}.txt"
+    client2lats = f"client2lats_{name}.txt"
+    client3lats = f"client3lats_{name}.txt"
+    print(name, server_rapl, client1lats, client2lats, client3lats)
+
+    if os.path.isfile(server_rapl) and os.path.isfile(client1lats) and os.path.isfile(client2lats) and os.path.isfile(client3lats):
+        with open(server_rapl) as file:
+            server_rapl_log = [float(line.rstrip()) for line in file]
+            joules = 0.0
+        if len(server_rapl_log) > 30:
+            print("server_rapl_log[10:30]: ", server_rapl_log[10:30])
+            print("avg_watts ", mean(server_rapl_log[10:30]))
+            joules = mean(server_rapl_log[10:30])
+        else:
+            # faulty run
+            joules = 9999999.0
+
+        with open(client1lats) as file:
+            for line in file:
+                ## convert to microsecond
+                if "50th" in line.rstrip():
+                    LATENCIES1["50"] = float((line.rstrip().split(" "))[3]) * 1000.0
+                if "75th" in line.rstrip():
+                    LATENCIES1["75"] = float((line.rstrip().split(" "))[3]) * 1000.0
+                if "90th" in line.rstrip():
+                    LATENCIES1["90"] = float((line.rstrip().split(" "))[3]) * 1000.0
+                if "95th" in line.rstrip():
+                    LATENCIES1["95"] = float((line.rstrip().split(" "))[3]) * 1000.0
+                if "99th" in line.rstrip():
+                    LATENCIES1["99"] = float((line.rstrip().split(" "))[3]) * 1000.0
+        print(LATENCIES1)
+
+        with open(client2lats) as file:
+            for line in file:
+                ## convert to microsecond
+                if "50th" in line.rstrip():
+                    LATENCIES2["50"] = float((line.rstrip().split(" "))[3]) * 1000.0
+                if "75th" in line.rstrip():
+                    LATENCIES2["75"] = float((line.rstrip().split(" "))[3]) * 1000.0
+                if "90th" in line.rstrip():
+                    LATENCIES2["90"] = float((line.rstrip().split(" "))[3]) * 1000.0
+                if "95th" in line.rstrip():
+                    LATENCIES2["95"] = float((line.rstrip().split(" "))[3]) * 1000.0
+                if "99th" in line.rstrip():
+                    LATENCIES2["99"] = float((line.rstrip().split(" "))[3]) * 1000.0
+        print(LATENCIES2)
+
+        with open(client3lats) as file:
+            for line in file:
+                ## convert to microsecond
+                if "50th" in line.rstrip():
+                    LATENCIES3["50"] = float((line.rstrip().split(" "))[3]) * 1000.0
+                if "75th" in line.rstrip():
+                    LATENCIES3["75"] = float((line.rstrip().split(" "))[3]) * 1000.0
+                if "90th" in line.rstrip():
+                    LATENCIES3["90"] = float((line.rstrip().split(" "))[3]) * 1000.0
+                if "95th" in line.rstrip():
+                    LATENCIES3["95"] = float((line.rstrip().split(" "))[3]) * 1000.0
+                if "99th" in line.rstrip():
+                    LATENCIES3["99"] = float((line.rstrip().split(" "))[3]) * 1000.0
+        print(LATENCIES3)
+
+        meanlatency = mean([LATENCIES1[percentile_target], LATENCIES2[percentile_target], LATENCIES3[percentile_target]])
+        maxlatency = max(max(LATENCIES1[percentile_target], LATENCIES2[percentile_target]), LATENCIES3[percentile_target]) 
+        return joules, meanlatency, maxlatency
+    else:
+        return -1.0, -1.0, -1.0
+
 def img_dnn_eval_func(params):
     global lat_target
     global percentile_target
@@ -105,78 +185,26 @@ def img_dnn_eval_func(params):
     dvfs = int2hexstr(int(params['dvfs']))
     print(itr, dvfs)
 
-    #print(f"MITR={itr} MDVFS={dvfs} MQPS={TARGET_QPS} ./run_img-dnn.sh runOneStatic")
-    p1 = runLocalCommand(f"MITR={itr} MDVFS={dvfs} MQPS={TARGET_QPS} ./run_img-dnn.sh runOneStatic")
-    p1.communicate()
-    #for out in p1.communicate():
-    #    for line in str(out).split("\\n"):
-    #        print(line.strip())    
-    name=f"qps{TARGET_QPS}_itr{itr}_dvfs{dvfs}"
-    server_rapl = f"server_rapl_{name}.log"
-    client1lats = f"client1lats_{name}.txt"
-    client2lats = f"client2lats_{name}.txt"
-    client3lats = f"client3lats_{name}.txt"
-    print(name, server_rapl, client1lats, client2lats, client3lats)
-
-    with open(server_rapl) as file:
-        server_rapl_log = [float(line.rstrip()) for line in file]
-    joules = 0.0
-    if len(server_rapl_log) > 30:
-        print("server_rapl_log[10:30]: ", server_rapl_log[10:30])
-        print("avg_watts ", mean(server_rapl_log[10:30]))
-        joules = mean(server_rapl_log[10:30])
-    else:
-        # faulty run
-        joules = 9999999.0
-
-    with open(client1lats) as file:
-        for line in file:
-            ## convert to microsecond
-            if "50th" in line.rstrip():
-                LATENCIES1["50"] = float((line.rstrip().split(" "))[3]) * 1000.0
-            if "75th" in line.rstrip():
-                LATENCIES1["75"] = float((line.rstrip().split(" "))[3]) * 1000.0
-            if "90th" in line.rstrip():
-                LATENCIES1["90"] = float((line.rstrip().split(" "))[3]) * 1000.0
-            if "95th" in line.rstrip():
-                LATENCIES1["95"] = float((line.rstrip().split(" "))[3]) * 1000.0
-            if "99th" in line.rstrip():
-                LATENCIES1["99"] = float((line.rstrip().split(" "))[3]) * 1000.0
-    print(LATENCIES1)
-
-    with open(client2lats) as file:
-        for line in file:
-            ## convert to microsecond
-            if "50th" in line.rstrip():
-                LATENCIES2["50"] = float((line.rstrip().split(" "))[3]) * 1000.0
-            if "75th" in line.rstrip():
-                LATENCIES2["75"] = float((line.rstrip().split(" "))[3]) * 1000.0
-            if "90th" in line.rstrip():
-                LATENCIES2["90"] = float((line.rstrip().split(" "))[3]) * 1000.0
-            if "95th" in line.rstrip():
-                LATENCIES2["95"] = float((line.rstrip().split(" "))[3]) * 1000.0
-            if "99th" in line.rstrip():
-                LATENCIES2["99"] = float((line.rstrip().split(" "))[3]) * 1000.0
-    print(LATENCIES2)
-
-    with open(client3lats) as file:
-        for line in file:
-            ## convert to microsecond
-            if "50th" in line.rstrip():
-                LATENCIES3["50"] = float((line.rstrip().split(" "))[3]) * 1000.0
-            if "75th" in line.rstrip():
-                LATENCIES3["75"] = float((line.rstrip().split(" "))[3]) * 1000.0
-            if "90th" in line.rstrip():
-                LATENCIES3["90"] = float((line.rstrip().split(" "))[3]) * 1000.0
-            if "95th" in line.rstrip():
-                LATENCIES3["95"] = float((line.rstrip().split(" "))[3]) * 1000.0
-            if "99th" in line.rstrip():
-                LATENCIES3["99"] = float((line.rstrip().split(" "))[3]) * 1000.0
-    print(LATENCIES3)
-
-    meanlatency = mean([LATENCIES1[percentile_target], LATENCIES2[percentile_target], LATENCIES3[percentile_target]])
-    maxlatency = max(max(LATENCIES1[percentile_target], LATENCIES2[percentile_target]), LATENCIES3[percentile_target])
-
+    joules, meanlatency, maxlatency = runImgDNN(itr, dvfs)
+    if joules == -1.0:
+        sys.exit("joules == -1.0")
+    #while joules == -1.0:
+    #    print("joules == -1, run failed, retrying...")
+        ## ensure previous is killed
+    #    killOut = runRemoteCommand(f"pkill -f img-dnn_server_networked", TBENCH_SERVER)
+    #    killOut.communicate()
+    #    time.sleep(1)
+    #    killOut = runRemoteCommand(f"pkill -f img-dnn_client_networked", "192.168.1.1")
+    #    killOut.communicate()
+    #    time.sleep(1)
+    #    killOut = runRemoteCommand(f"pkill -f img-dnn_client_networked", "192.168.1.2")
+    #    killOut.communicate()
+    #    time.sleep(1)
+    #    killOut = runRemoteCommand(f"pkill -f img-dnn_client_networked", "192.168.1.3")
+    #    killOut.communicate()
+    #    time.sleep(1)    
+    #    joules, meanlatency, maxlatency = runImgDNN(itr, dvfs)
+        
     old_joules = joules
     ## if ITR, DVFS results in SLA violation then bump up energy use
     if LATENCIES1[percentile_target] > lat_target or LATENCIES2[percentile_target] > lat_target or LATENCIES3[percentile_target] > lat_target:
