@@ -13,6 +13,11 @@ export CLIENT2=${CLIENT2:-"192.168.1.2"}
 export CLIENT3=${CLIENT3:-"192.168.1.3"}
 export TBENCH_SERVER=${TBENCH_SERVER:-"192.168.1.20"}
 
+function clean
+{
+    rm *.txt *.log *.bin
+}
+
 function runOneDynamic
 {
     echo ${TBENCH_SERVER} ${MQPS} ${MITR} ${MDVFS}
@@ -40,9 +45,9 @@ function runOneDynamic
 	python ~/bayop/tailbench/utilities/parselats.py client3lats_${name}.bin > client3lats_${name}.txt	
     done
 
-    rsync --mkpath -avz *.log don:/home/handong/cloudlab/xl170/img-dnn/linux_dynamic/
-    rsync --mkpath -avz *.txt don:/home/handong/cloudlab/xl170/img-dnn/linux_dynamic/
-    rsync --mkpath -avz *.bin don:/home/handong/cloudlab/xl170/img-dnn/linux_dynamic/
+    #rsync --mkpath -avz *.log don:/home/handong/cloudlab/xl170/img-dnn/linux_dynamic/
+    #rsync --mkpath -avz *.txt don:/home/handong/cloudlab/xl170/img-dnn/linux_dynamic/
+    #rsync --mkpath -avz *.bin don:/home/handong/cloudlab/xl170/img-dnn/linux_dynamic/
 }
 
 function runOneStatic
@@ -113,63 +118,6 @@ function runLinuxStatic
 	done
     done
     echo "*********** runLinuxStatic FINISHED *************"
-}
-
-function runLinuxDynamic
-{
-    echo "********************** runLinuxDynamic **********************"
-    echo "mkdir ${currdate}"
-    #mkdir ${currdate}
-    
-    for qps in ${MQPS}; do
-	for i in `seq 0 1 $NITERS`; do
-	    MAXQ=$((qps*30))
-	    echo "### ${i} python img-dnn.py --qps ${qps} --warmup ${qps} --maxq ${MAXQ} ###"
-	    echo ""
-	    
-	    name="qps${qps}_niter${i}"
-	    
-	    ## start power logging
-	    ssh ${TBENCH_SERVER} sudo systemctl stop rapl_log
-	    ssh ${TBENCH_SERVER} sudo rm /data/rapl_log.log
-	    ssh ${TBENCH_SERVER} sudo systemctl restart rapl_log
-
-	    python img-dnn.py --qps ${qps} --warmup ${qps} --maxq ${MAXQ}
-
-	    ## stop power logging
-	    ssh ${TBENCH_SERVER} sudo systemctl stop rapl_log
-	    #ssh ${TBENCH_SERVER} cat /data/rapl_log.log
-
-	    ## retrieve logs
-	    #scp -r ${TBENCH_SERVER}:/data/rapl_log.log rapl_${i}_${qps}.log
-	    #python ~/bayop/tailbench/utilities/parselats.py lats.bin > lats_${i}_${qps}.log
-	    #mv lats.bin lats_${i}_${qps}.bin
-	    #rm lats.txt
-
-	    #mv rapl_${i}_${qps}.log ${currdate}
-	    #mv lats_${i}_${qps}.log ${currdate}
-	    #mv lats_${i}_${qps}.bin ${currdate}
-
-	    scp -r ${TBENCH_SERVER}:/data/rapl_log.log server_rapl_${name}.log
-	    
-	    scp -r ${CLIENT1}:~/lats.bin client1lats_${name}.bin
-	    python ~/bayop/tailbench/utilities/parselats.py client1lats_${name}.bin > client1lats_${name}.txt
-	    mv lats.txt lats_${name}.txt
-    
-	    #scp -r ${TBENCH_SERVER}:/data/rapl_log.log server_rapl_log.log
-	    #cat server_rapl_log.log
-
-	    #python ~/bayop/tailbench/utilities/parselats.py lats.bin
-	    #rm lats.bin lats.txt
-
-	    #scp -r ${CLIENT1}:~/lats.bin client1lats.bin
-	    #python ~/bayop/tailbench/utilities/parselats.py client1lats.bin
-	    #rm client1lats.bin lats.txt
-	    echo "########################################################"
-	    echo ""
-	done
-    done
-    echo "*********** ${currdate} FINISHED *************"
 }
 
 $@
