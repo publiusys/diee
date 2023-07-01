@@ -28,7 +28,7 @@ function runOneStatic
     ssh ${TBENCH_SERVER} sudo systemctl restart rapl_log
 
     MAXQ=$((3*MQPS*30))    
-    python xapian.py --qps ${MQPS} --warmup ${MQPS} --maxq ${MAXQ} --itr ${MITR} --dvfs ${MDVFS} --nclients 3
+    python sphinx.py --qps ${MQPS} --warmup ${MQPS} --maxq ${MAXQ} --itr ${MITR} --dvfs ${MDVFS} --nclients 3
     name="qps${MQPS}_itr${MITR}_dvfs${MDVFS}"
     
     ## stop power logging
@@ -41,6 +41,9 @@ function runOneStatic
     python ~/bayop/tailbench/utilities/parselats.py client2lats_${name}.bin > client2lats_${name}.txt
     scp -r ${CLIENT3}:~/lats.bin client3lats_${name}.bin
     python ~/bayop/tailbench/utilities/parselats.py client3lats_${name}.bin > client3lats_${name}.txt
+
+    cat client*lats_${name}.txt | grep 99th
+    head -n 30 server_rapl_${name}.log | tail -n 20
 }
 
 function runOneDynamic
