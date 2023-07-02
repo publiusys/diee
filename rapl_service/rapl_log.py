@@ -29,7 +29,7 @@ try:
     while run:        
         output = float(runLocalCommandGet("/users/hand32/bayop/uarch-configure/rapl-read/raplog -m"))
         ## check if energy value is a valid one
-        if output > 10.0 and output < 1000.0:
+        if output > 0.0 and output < 1000.0:
             f.write(str(output)+"\n")
             f.flush()
         else:
