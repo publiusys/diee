@@ -18,21 +18,20 @@ function run() {
 		mv *.log ${newdir}
 		mv *.txt ${newdir}
 		
-		#rsync --mkpath -avz ${newdir}/* don:/home/handong/cloudlab/xl170/img-dnn/linux_static/${newdir}/
+		rsync --mkpath -avz ${newdir}/* don:/home/handong/cloudlab/rs620/img-dnn/linux_static/${newdir}/
 	    done
 	done
     done
 }
 
 function runMult() {
-    NTRIALS=40 MQPS=1500 PERCENTILE=90 LATENCY=2500 run
-    NTRIALS=40 MQPS=2000 PERCENTILE=99 LATENCY=5000 run
-    NTRIALS=40 MQPS=2000 PERCENTILE=90 LATENCY=2500 run
+    NTRIALS=40 MQPS=400 PERCENTILE=99 LATENCY=5000 run
+    NTRIALS=40 MQPS=800 PERCENTILE=99 LATENCY=5000 run
+    NTRIALS=40 MQPS=1000 PERCENTILE=99 LATENCY=5000 run
     
-    NTRIALS=40 MQPS=2500 PERCENTILE=99 LATENCY=5000 run
-    NTRIALS=40 MQPS=2500 PERCENTILE=90 LATENCY=2500 run
-    NTRIALS=40 MQPS=3000 PERCENTILE=99 LATENCY=5000 run
-    NTRIALS=40 MQPS=3000 PERCENTILE=90 LATENCY=2500 run
+    NTRIALS=40 MQPS=400 PERCENTILE=90 LATENCY=2500 run
+    NTRIALS=40 MQPS=800 PERCENTILE=90 LATENCY=2500 run
+    NTRIALS=40 MQPS=1000 PERCENTILE=90 LATENCY=2500 run
 }
 
 $@

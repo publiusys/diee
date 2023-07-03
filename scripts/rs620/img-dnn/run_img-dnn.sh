@@ -44,13 +44,13 @@ function runOneDynamic
 	scp -r ${CLIENT3}:~/lats.bin client3lats_${name}.bin
 	python ~/bayop/tailbench/utilities/parselats.py client3lats_${name}.bin > client3lats_${name}.txt
 
-	cat client*lats*.txt | grep 99th
+	cat *${name}*.txt | grep 99th
 	head -n 30 server_rapl_${name}.log | tail -n 20
     done
 
-    #rsync --mkpath -avz *.log don:/home/handong/cloudlab/xl170/img-dnn/linux_dynamic/
-    #rsync --mkpath -avz *.txt don:/home/handong/cloudlab/xl170/img-dnn/linux_dynamic/
-    #rsync --mkpath -avz *.bin don:/home/handong/cloudlab/xl170/img-dnn/linux_dynamic/
+    rsync --mkpath -avz *.log don:/home/handong/cloudlab/rs620/img-dnn/linux_dynamic/
+    rsync --mkpath -avz *.txt don:/home/handong/cloudlab/rs620/img-dnn/linux_dynamic/
+    rsync --mkpath -avz *.bin don:/home/handong/cloudlab/rs620/img-dnn/linux_dynamic/
 }
 
 function runOneStatic
