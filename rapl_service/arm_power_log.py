@@ -6,6 +6,8 @@ import os
 import signal
 
 '''
+Based on: https://docs.kernel.org/hwmon/xgene-hwmon.html
+
 [handong@abeast1-sesa rapl_service]$ grep "" /sys/class/hwmon/hwmon*/*_{label,input}
 /sys/class/hwmon/hwmon0/temp1_label:loc1
 /sys/class/hwmon/hwmon1/power1_label:CPU power
