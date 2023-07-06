@@ -51,15 +51,19 @@ def runLocalCommand(com):
 def setITR():
     global GITR
 
+    ieth = runRemoteCommandGet("ifconfig | grep -B1 192.168.1 | grep -o '^\w*'", TBENCH_SERVER).decode()
     frames = int(int(GITR)/2)
-    #p1 = runRemoteCommand(f"ethtool -C ens1f1np1 rx-frames {GITR} tx-frames {GITR} rx-usecs {GITR} tx-usecs {GITR}", TBENCH_SERVER)
-    p1 = runRemoteCommand(f"ethtool -C ens1f1np1 rx-frames {frames} tx-frames {frames} rx-usecs {GITR} tx-usecs {GITR}", TBENCH_SERVER)
+    p1 = runRemoteCommand(f"ethtool -C {ieth} rx-frames {frames} tx-frames {frames} rx-usecs {GITR} tx-usecs {GITR}", TBENCH_SERVER)
     p1.communicate()
 
 def setDVFS():
     global GDVFS
-    s = "0x10000"+GDVFS
-    p1 = runRemoteCommand(f"wrmsr -a 0x199 {s}", TBENCH_SERVER)
+    
+    #0x0 = 2.35GHz
+    #0x1 = 2.00GHz
+    #0x2 = 1.50GHz
+    
+    p1 = runRemoteCommand(f"wrmsr -a 0xc0010062 {GDVFS}", TBENCH_SERVER)
     p1.communicate()
     
 def run():

@@ -76,6 +76,9 @@ function runOneStatic
     python ~/bayop/tailbench/utilities/parselats.py client2lats_${name}.bin > client2lats_${name}.txt
     scp -r ${CLIENT3}:~/lats.bin client3lats_${name}.bin
     python ~/bayop/tailbench/utilities/parselats.py client3lats_${name}.bin > client3lats_${name}.txt
+
+    cat *${name}*.txt | grep 99th
+    head -n 30 server_rapl_${name}.log | tail -n 20
 }
 
 $@

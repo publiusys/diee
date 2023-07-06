@@ -182,28 +182,12 @@ def img_dnn_eval_func(params):
 
     # launch experiment with params
     itr = str(int(params['itr']))
-    dvfs = int2hexstr(int(params['dvfs']))
+    dvfs = str(int(params['dvfs']))
     print(itr, dvfs)
 
     joules, meanlatency, maxlatency = runImgDNN(itr, dvfs)
     if joules == -1.0:
         sys.exit("joules == -1.0")
-    #while joules == -1.0:
-    #    print("joules == -1, run failed, retrying...")
-        ## ensure previous is killed
-    #    killOut = runRemoteCommand(f"pkill -f img-dnn_server_networked", TBENCH_SERVER)
-    #    killOut.communicate()
-    #    time.sleep(1)
-    #    killOut = runRemoteCommand(f"pkill -f img-dnn_client_networked", "192.168.1.1")
-    #    killOut.communicate()
-    #    time.sleep(1)
-    #    killOut = runRemoteCommand(f"pkill -f img-dnn_client_networked", "192.168.1.2")
-    #    killOut.communicate()
-    #    time.sleep(1)
-    #    killOut = runRemoteCommand(f"pkill -f img-dnn_client_networked", "192.168.1.3")
-    #    killOut.communicate()
-    #    time.sleep(1)    
-    #    joules, meanlatency, maxlatency = runImgDNN(itr, dvfs)
         
     old_joules = joules
     ## if ITR, DVFS results in SLA violation then bump up energy use
@@ -224,8 +208,8 @@ def perform_bayesopt(metric = 'read_99th_mean', minimize = True, ntrials=30):
     results = {}
     counter = 0
     
-    itr_vals = [*range(2, 1000, 2)]
-    dvfs_vals = [*range(3072, 6144, 1)]
+    itr_vals = [*range(2, 1300, 2)]
+    dvfs_vals = [*range(0, 3, 1)]
     
     search_space = [{'is_ordered': True,
                      'log_scale': False,
@@ -258,7 +242,7 @@ def perform_bayesopt(metric = 'read_99th_mean', minimize = True, ntrials=30):
                                                    minimize=minimize,
                                                    total_trials=ntrials)
         
-    print(f"best_params: itr={str(int(best_params['itr']))} dvfs={int2hexstr(int(best_params['dvfs']))}")
+    print(f"best_params: itr={str(int(best_params['itr']))} dvfs={int(best_params['dvfs'])}")
     
     ## set best ITR, DVFS
     #setITR(str(int(best_params['itr'])))

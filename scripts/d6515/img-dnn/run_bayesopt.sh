@@ -18,7 +18,7 @@ function run() {
 		mv *.log ${newdir}
 		mv *.txt ${newdir}
 		
-		rsync --mkpath -avz ${newdir}/* don:/home/handong/cloudlab/d6515/img-dnn/linux_static/${newdir}/
+		#rsync --mkpath -avz ${newdir}/* don:/home/handong/cloudlab/d6515/img-dnn/linux_static/${newdir}/
 	    done
 	done
     done
