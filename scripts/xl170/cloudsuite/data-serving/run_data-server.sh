@@ -35,9 +35,9 @@ function runOneDynamic
 	ssh ${TBENCH_SERVER} sudo systemctl stop rapl_log
 	
 	scp -r ${TBENCH_SERVER}:/data/rapl_log.log server_rapl_${name}.log
-	mv clientOut.log client1lats_${name}.txt		
+	mv clientOut.log client1lats_${name}.txt
     done
-
+    
     #rsync --mkpath -avz *.log don:/home/handong/cloudlab/xl170/img-dnn/linux_dynamic/
     #rsync --mkpath -avz *.txt don:/home/handong/cloudlab/xl170/img-dnn/linux_dynamic/
     #rsync --mkpath -avz *.bin don:/home/handong/cloudlab/xl170/img-dnn/linux_dynamic/
@@ -51,22 +51,15 @@ function runOneStatic
     ssh ${TBENCH_SERVER} sudo systemctl stop rapl_log
     ssh ${TBENCH_SERVER} sudo rm /data/rapl_log.log
     ssh ${TBENCH_SERVER} sudo systemctl restart rapl_log
-
-    MAXQ=$((3*MQPS*30))    
-    python img-dnn.py --qps ${MQPS} --warmup ${MQPS} --maxq ${MAXQ} --itr ${MITR} --dvfs ${MDVFS} --nclients 3
+    
+    python data-server.py --qps ${MQPS} --itr ${MITR} --dvfs ${MDVFS}
     name="qps${MQPS}_itr${MITR}_dvfs${MDVFS}"
     
     ## stop power logging
     ssh ${TBENCH_SERVER} sudo systemctl stop rapl_log
     
-    scp -r ${TBENCH_SERVER}:/data/rapl_log.log server_rapl_${name}.log    
-    scp -r ${CLIENT1}:~/lats.bin client1lats_${name}.bin
-    python ~/bayop/tailbench/utilities/parselats.py client1lats_${name}.bin > client1lats_${name}.txt
-    scp -r ${CLIENT2}:~/lats.bin client2lats_${name}.bin
-    python ~/bayop/tailbench/utilities/parselats.py client2lats_${name}.bin > client2lats_${name}.txt
-    scp -r ${CLIENT3}:~/lats.bin client3lats_${name}.bin
-    python ~/bayop/tailbench/utilities/parselats.py client3lats_${name}.bin > client3lats_${name}.txt
+    scp -r ${TBENCH_SERVER}:/data/rapl_log.log server_rapl_${name}.log
+    mv clientOut.log client1lats_${name}.txt
 }
-
 
 $@
