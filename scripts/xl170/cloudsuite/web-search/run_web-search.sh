@@ -30,20 +30,20 @@ function runOneDynamic
 	    ssh ${TBENCH_SERVER} sudo rm /data/rapl_log.log
 	    ssh ${TBENCH_SERVER} sudo systemctl restart rapl_log
 	    
-	    python web-server.py --qps ${qps}
+	    python web-search.py --qps ${qps}
 	    
 	    name="i${i}_qps${qps}_itr${MITR}_dvfs${MDVFS}"
 	    ## stop power logging
 	    ssh ${TBENCH_SERVER} sudo systemctl stop rapl_log
 	    
 	    scp -r ${TBENCH_SERVER}:/data/rapl_log.log server_rapl_${name}.log
-	    cat clientOut.log | grep percentile > client1lats_${name}.txt
+	    cat clientOut.log | grep "<" > client1lats_${name}.txt
 	    cp clientOut.log clientOut_${name}.log
 	    mv *.log linux_dynamic/
 	    mv *.txt linux_dynamic/
 	done
     done
-    rsync --mkpath -avz linux_dynamic/* don:/home/handong/cloudlab/xl170/cloudsuite/web_server/linux_dynamic/
+    rsync --mkpath -avz linux_dynamic/* don:/home/handong/cloudlab/xl170/cloudsuite/web_search/linux_dynamic/
 }
 
 function runOneStatic
