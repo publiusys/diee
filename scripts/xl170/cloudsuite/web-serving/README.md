@@ -1,9 +1,10 @@
 # Client
 
-`
+```
 QPS=20
-docker run --net=host --name=faban_client_20 cloudsuite/web-serving:faban_client 192.168.1.20 20
-`
+
+docker run -d -it --entrypoint /bin/bash --net=host --name=faban_client cloudsuite/web-serving:faban_client
+```
 
 # Server
 
