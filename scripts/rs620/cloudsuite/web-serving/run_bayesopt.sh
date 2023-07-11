@@ -14,22 +14,25 @@ function run() {
 		echo $newdir
 		mkdir ${newdir}
 		python -u bayesopt.py --trials ${NTRIALS} --qps ${qps} --percentile ${percentile} --latency ${latency} > ${newdir}/"${newdir}.log"
-		mv *.bin ${newdir}
 		mv *.log ${newdir}
 		mv *.txt ${newdir}
 		
-		#rsync --mkpath -avz ${newdir}/* don:/home/handong/cloudlab/xl170/cloudsuite/data_server/linux_static/${newdir}/
+		rsync --mkpath -avz ${newdir}/* don:/home/handong/cloudlab/rs620/cloudsuite/web_server/linux_static/${newdir}/
 	    done
 	done
     done
 }
 
 function runMult() {
-    NTRIALS=40 MQPS=5000 PERCENTILE=99 LATENCY=1000 run
-    NTRIALS=40 MQPS=2500 PERCENTILE=99 LATENCY=1000 run
+    ## 99.9% < 2000 ms
+    NTRIALS=40 MQPS=5 PERCENTILE=999 LATENCY=2000000 run
+    NTRIALS=40 MQPS=10 PERCENTILE=999 LATENCY=2000000 run
+    NTRIALS=40 MQPS=20 PERCENTILE=999 LATENCY=2000000 run
 
-    NTRIALS=40 MQPS=5000 PERCENTILE=95 LATENCY=600 run
-    NTRIALS=40 MQPS=2500 PERCENTILE=95 LATENCY=600 run
+    ## 95% < 500 ms
+    NTRIALS=40 MQPS=5 PERCENTILE=95 LATENCY=500000 run
+    NTRIALS=40 MQPS=10 PERCENTILE=95 LATENCY=500000 run
+    NTRIALS=40 MQPS=20 PERCENTILE=95 LATENCY=500000 run
 }
 
 $@

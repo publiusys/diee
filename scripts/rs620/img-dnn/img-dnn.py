@@ -49,8 +49,6 @@ def runLocalCommand(com):
 
 def setITR():
     global GITR
-
-    #frames = int(int(GITR)/2)
     p1 = runRemoteCommand(f"ethtool -C enp4s0f0np0 rx-usecs-irq {GITR} rx-usecs {GITR}", TBENCH_SERVER)
     p1.communicate()
 
