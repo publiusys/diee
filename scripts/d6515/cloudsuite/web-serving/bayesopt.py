@@ -117,11 +117,23 @@ def runWebServer(itr, dvfs):
             for line in file:
                 ## convert to microsecond
                 if 'nth="95"' in line.rstrip():
-                    s95.append(float(line.rstrip().split('>')[1].split('<')[0])*1000.0)
+                    tmp = line.rstrip().split('>')[1].split('<')[0]
+                    if tmp.isnumeric():
+                        s95.append(float(tmp)*1000.0)
+                    else:
+                        s95.append(9999.0*1000.0)
                 if 'nth="99"' in line.rstrip():
-                    s99.append(float(line.rstrip().split('>')[1].split('<')[0])*1000.0)
+                    tmp = line.rstrip().split('>')[1].split('<')[0]
+                    if tmp.isnumeric():
+                        s99.append(float(tmp)*1000.0)
+                    else:
+                        s99.append(9999.0*1000.0)
                 if 'nth="99.9"' in line.rstrip():
-                    s999.append(float(line.rstrip().split('>')[1].split('<')[0])*1000.0)
+                    tmp = line.rstrip().split('>')[1].split('<')[0]
+                    if tmp.isnumeric():
+                        s999.append(float(tmp)*1000.0)
+                    else:
+                        s999.append(9999.0*1000.0)
                     
         LATENCIES1["95"] = max(s95)
         LATENCIES1["99"] = max(s99)

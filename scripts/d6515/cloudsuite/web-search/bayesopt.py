@@ -128,9 +128,17 @@ def runWebSearch(itr, dvfs):
             for line in file:
                 ## convert to microsecond
                 if "p90th" in line.rstrip():
-                    LATENCIES1["90"] = float(line.rstrip().split('>')[1].split('<')[0])*1000000.0
+                    tmp = line.rstrip().split('>')[1].split('<')[0]
+                    if tmp.isnumeric():
+                        LATENCIES1["90"] = float(line.rstrip().split('>')[1].split('<')[0])*1000000.0
+                    else:
+                        LATENCIES1["90"] = float(99.9)*1000000.0
                 if "p99th" in line.rstrip():
-                    LATENCIES1["99"] = float(line.rstrip().split('>')[1].split('<')[0])*1000000.0
+                    tmp = line.rstrip().split('>')[1].split('<')[0]
+                    if tmp.isnumeric():
+                        LATENCIES1["99"] = float(line.rstrip().split('>')[1].split('<')[0])*1000000.0
+                    else:
+                        LATENCIES1["99"] = float(99.9)*1000000.0
 
         print(LATENCIES1)        
         return joules, LATENCIES1[percentile_target]
