@@ -176,8 +176,8 @@ def perform_bayesopt(metric = 'read_99th_mean', minimize = True, ntrials=30):
     results = {}
     counter = 0
     
-    itr_vals = [*range(2, 1000, 2)]
-    dvfs_vals = [*range(3072, 6144, 1)]
+    itr_vals = [*range(2, 1300, 2)]
+    dvfs_vals = [*range(0, 3, 1)]
     
     search_space = [{'is_ordered': True,
                      'log_scale': False,

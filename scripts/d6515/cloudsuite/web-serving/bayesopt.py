@@ -41,23 +41,8 @@ LATENCIES1 = {
     "75" : 0.0,
     "90" : 0.0,
     "95" : 0.0,
-    "99" : 0.0
-}
-
-LATENCIES2 = {
-    "50" : 0.0,
-    "75" : 0.0,
-    "90" : 0.0,
-    "95" : 0.0,
-    "99" : 0.0
-}
-
-LATENCIES3 = {
-    "50" : 0.0,
-    "75" : 0.0,
-    "90" : 0.0,
-    "95" : 0.0,
-    "99" : 0.0
+    "99" : 0.0,
+    "999" : 0.0
 }
 
 #print(hex2int("0c00"))
@@ -100,9 +85,9 @@ def runLocalCommand(com):
     p1 = Popen(com, shell=True, stdout=PIPE, stderr=PIPE)
     return p1
 
-def runWebSearch(itr, dvfs):
-    #print(f"MITR={itr} MDVFS={dvfs} MQPS={TARGET_QPS} ./run_web-search.sh runOneStatic")
-    p1 = runLocalCommand(f"MITR={itr} MDVFS={dvfs} MQPS={TARGET_QPS} ./run_web-search.sh runOneStatic")
+def runWebServer(itr, dvfs):
+    print(f"MITR={itr} MDVFS={dvfs} MQPS={TARGET_QPS} ./run_web-serverh.sh runOneStatic")
+    p1 = runLocalCommand(f"MITR={itr} MDVFS={dvfs} MQPS={TARGET_QPS} ./run_web-server.sh runOneStatic")
     for out in p1.communicate():
         for line in str(out).split("\\n"):
             print(line.strip())
@@ -117,28 +102,37 @@ def runWebSearch(itr, dvfs):
             server_rapl_log = [float(line.rstrip()) for line in file]
             joules = 0.0
         if len(server_rapl_log) > 30:
-            print("server_rapl_log[70:90]: ", server_rapl_log[70:90])
-            print("avg_watts ", mean(server_rapl_log[70:90]))
-            joules = mean(server_rapl_log[70:90])
+            print("server_rapl_log[20:50]: ", server_rapl_log[20:50])
+            print("avg_watts ", mean(server_rapl_log[20:50]))
+            joules = mean(server_rapl_log[20:50])
         else:
             # faulty run
             joules = 9999999.0        
+
+        s95 = []
+        s99 = []
+        s999 = []
         
         with open(client1lats) as file:
             for line in file:
                 ## convert to microsecond
-                if "p90th" in line.rstrip():
-                    LATENCIES1["90"] = float(line.rstrip().split('>')[1].split('<')[0])*1000000.0
-                if "p99th" in line.rstrip():
-                    LATENCIES1["99"] = float(line.rstrip().split('>')[1].split('<')[0])*1000000.0
-
-        print(LATENCIES1)        
+                if 'nth="95"' in line.rstrip():
+                    s95.append(float(line.rstrip().split('>')[1].split('<')[0])*1000.0)
+                if 'nth="99"' in line.rstrip():
+                    s99.append(float(line.rstrip().split('>')[1].split('<')[0])*1000.0)
+                if 'nth="99.9"' in line.rstrip():
+                    s999.append(float(line.rstrip().split('>')[1].split('<')[0])*1000.0)
+                    
+        LATENCIES1["95"] = max(s95)
+        LATENCIES1["99"] = max(s99)
+        LATENCIES1["999"] = max(s999)
+        print(LATENCIES1)
         return joules, LATENCIES1[percentile_target]
     else:
         return -1.0, -1.0
     
 
-def web_search_eval_func(params):
+def web_server_eval_func(params):
     global lat_target
     global percentile_target
     global TARGET_QPS
@@ -148,7 +142,7 @@ def web_search_eval_func(params):
     dvfs = int2hexstr(int(params['dvfs']))
     print(itr, dvfs)
 
-    joules, meanlatency = runWebSearch(itr, dvfs)
+    joules, meanlatency = runWebServer(itr, dvfs)
     if joules == -1.0:
         sys.exit("joules == -1.0")
         
@@ -161,7 +155,7 @@ def web_search_eval_func(params):
     print("")
     
     res = {
-        'web_search': (joules, 0.0)
+        'web_server': (joules, 0.0)
     }
     return res
 
@@ -192,16 +186,16 @@ def perform_bayesopt(metric = 'read_99th_mean', minimize = True, ntrials=30):
 
     if MINLATENCY == True:        
         best_params, values, exp, model = optimize(parameters=search_space,
-                                                   evaluation_function=lambda params: web_search_eval_func(params),
-                                                   experiment_name=f'web_search_discrete',
-                                                   objective_name='web_search',
+                                                   evaluation_function=lambda params: web_server_eval_func(params),
+                                                   experiment_name=f'web_server_discrete',
+                                                   objective_name='web_server',
                                                    minimize=minimize,
                                                    total_trials=ntrials)
     else:
         best_params, values, exp, model = optimize(parameters=search_space,
-                                                   evaluation_function=lambda params: web_search_eval_func(params),
-                                                   experiment_name=f'web_search_discrete',
-                                                   objective_name='web_search',
+                                                   evaluation_function=lambda params: web_server_eval_func(params),
+                                                   experiment_name=f'web_server_discrete',
+                                                   objective_name='web_server',
                                                    minimize=minimize,
                                                    total_trials=ntrials)
         
