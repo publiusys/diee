@@ -1,0 +1,91 @@
+  *-network:0
+       description: Ethernet interface
+       product: I350 Gigabit Network Connection
+       vendor: Intel Corporation
+       physical id: 0
+       bus info: pci@0000:01:00.0
+       logical name: eno1
+       version: 01
+       serial: b8:ca:3a:6c:a1:24
+       size: 1Gbit/s
+       capacity: 1Gbit/s
+       width: 32 bits
+       clock: 33MHz
+       capabilities: pm msi msix pciexpress vpd bus_master cap_list rom ethernet physical tp 10bt 10bt-fd 100bt 100bt-fd 1000bt-fd autonegotiation
+       configuration: autonegotiation=on broadcast=yes driver=igb driverversion=5.15.0-69-generic duplex=full firmware=1.67, 0x80000faa, 19.5.12 ip=198.22.255.77 latency=0 link=yes multicast=yes port=twisted pair speed=1Gbit/s
+       resources: irq:56 memory:d8b00000-d8bfffff memory:d8ff0000-d8ff3fff memory:d8000000-d807ffff memory:d5000000-d501ffff memory:d5020000-d503ffff
+  *-network:1 DISABLED
+       description: Ethernet interface
+       product: I350 Gigabit Network Connection
+       vendor: Intel Corporation
+       physical id: 0.1
+       bus info: pci@0000:01:00.1
+       logical name: eno2
+       version: 01
+       serial: b8:ca:3a:6c:a1:25
+       capacity: 1Gbit/s
+       width: 32 bits
+       clock: 33MHz
+       capabilities: pm msi msix pciexpress vpd bus_master cap_list rom ethernet physical tp 10bt 10bt-fd 100bt 100bt-fd 1000bt-fd autonegotiation
+       configuration: autonegotiation=on broadcast=yes driver=igb driverversion=5.15.0-69-generic firmware=1.67, 0x80000faa, 19.5.12 latency=0 link=no multicast=yes port=twisted pair
+       resources: irq:67 memory:d8c00000-d8cfffff memory:d8ff4000-d8ff7fff memory:d8080000-d80fffff memory:d5040000-d505ffff memory:d5060000-d507ffff
+  *-network:2 DISABLED
+       description: Ethernet interface
+       product: I350 Gigabit Network Connection
+       vendor: Intel Corporation
+       physical id: 0.2
+       bus info: pci@0000:01:00.2
+       logical name: eno3
+       version: 01
+       serial: b8:ca:3a:6c:a1:26
+       capacity: 1Gbit/s
+       width: 32 bits
+       clock: 33MHz
+       capabilities: pm msi msix pciexpress vpd bus_master cap_list rom ethernet physical tp 10bt 10bt-fd 100bt 100bt-fd 1000bt-fd autonegotiation
+       configuration: autonegotiation=on broadcast=yes driver=igb driverversion=5.15.0-69-generic firmware=1.67, 0x80000faa, 19.5.12 latency=0 link=no multicast=yes port=twisted pair
+       resources: irq:111 memory:d8d00000-d8dfffff memory:d8ff8000-d8ffbfff memory:d8100000-d817ffff memory:d5080000-d509ffff memory:d50a0000-d50bffff
+  *-network:3 DISABLED
+       description: Ethernet interface
+       product: I350 Gigabit Network Connection
+       vendor: Intel Corporation
+       physical id: 0.3
+       bus info: pci@0000:01:00.3
+       logical name: eno4
+       version: 01
+       serial: b8:ca:3a:6c:a1:27
+       capacity: 1Gbit/s
+       width: 32 bits
+       clock: 33MHz
+       capabilities: pm msi msix pciexpress vpd bus_master cap_list rom ethernet physical tp 10bt 10bt-fd 100bt 100bt-fd 1000bt-fd autonegotiation
+       configuration: autonegotiation=on broadcast=yes driver=igb driverversion=5.15.0-69-generic firmware=1.67, 0x80000faa, 19.5.12 latency=0 link=no multicast=yes port=twisted pair
+       resources: irq:122 memory:d8e00000-d8efffff memory:d8ffc000-d8ffffff memory:d8180000-d81fffff memory:d50c0000-d50dffff memory:d50e0000-d50fffff
+  *-network:0
+       description: Ethernet interface
+       product: SFC9120 10G Ethernet Controller
+       vendor: Solarflare Communications
+       physical id: 0
+       bus info: pci@0000:04:00.0
+       logical name: enp4s0f0np0
+       version: 01
+       serial: 00:0f:53:22:84:e0
+       size: 10Gbit/s
+       width: 64 bits
+       clock: 33MHz
+       capabilities: pm msi pciexpress msix vpd bus_master cap_list rom ethernet physical fibre 1000bt-fd
+       configuration: autonegotiation=off broadcast=yes driver=sfc driverversion=5.15.0-69-generic duplex=full firmware=4.0.0.6602 rx1 tx1 ip=192.168.1.20 latency=0 link=yes multicast=yes port=fibre speed=10Gbit/s
+       resources: irq:66 ioport:e800(size=256) memory:da000000-da7fffff memory:dbff8000-dbffbfff memory:db000000-db00ffff
+  *-network:1 DISABLED
+       description: Ethernet interface
+       product: SFC9120 10G Ethernet Controller
+       vendor: Solarflare Communications
+       physical id: 0.1
+       bus info: pci@0000:04:00.1
+       logical name: enp4s0f1np1
+       version: 01
+       serial: 00:0f:53:22:84:e1
+       size: 10Gbit/s
+       width: 64 bits
+       clock: 33MHz
+       capabilities: pm msi pciexpress msix vpd bus_master cap_list rom ethernet physical fibre 1000bt-fd
+       configuration: autonegotiation=off broadcast=yes driver=sfc driverversion=5.15.0-69-generic duplex=full firmware=4.0.0.6602 rx1 tx1 latency=0 link=no multicast=yes port=fibre speed=10Gbit/s
+       resources: irq:121 ioport:ec00(size=256) memory:da800000-daffffff memory:dbffc000-dbffffff memory:db010000-db01ffff
