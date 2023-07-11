@@ -145,7 +145,7 @@ def web_search_eval_func(params):
 
     # launch experiment with params
     itr = str(int(params['itr']))
-    dvfs = int2hexstr(int(params['dvfs']))
+    dvfs = str(int(params['dvfs']))
     print(itr, dvfs)
 
     joules, meanlatency = runWebSearch(itr, dvfs)
@@ -205,7 +205,7 @@ def perform_bayesopt(metric = 'read_99th_mean', minimize = True, ntrials=30):
                                                    minimize=minimize,
                                                    total_trials=ntrials)
         
-    print(f"best_params: itr={str(int(best_params['itr']))} dvfs={int2hexstr(int(best_params['dvfs']))}")
+    print(f"best_params: itr={str(int(best_params['itr']))} dvfs={int(best_params['dvfs'])}")
     
     ## set best ITR, DVFS
     #setITR(str(int(best_params['itr'])))
