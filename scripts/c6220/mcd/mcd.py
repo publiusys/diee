@@ -81,8 +81,8 @@ def run():
         runRemoteCommands(f"taskset -c 0 ~/mutilate/mutilate --binary -s {TBENCH_SERVER} --loadonly -K fb_key -V fb_value", TBENCH_AGENTS[0])
         time.sleep(1)
 
-    ## run mutilate
-    serverOut = runRemoteCommand(f"taskset -c 0 ~/mutilate/mutilate --binary -s {TBENCH_SERVER} --noload --agent={TBENCH_AGENTS[1:].join(',')} --threads=1 --keysize=fb_key --valuesize=fb_value --iadist=fb_ia --update=0.25 --depth=4 --measure_depth=1 --connections=16 --measure_connections=32 --measure_qps=2000 --qps={TARGET_QPS} --time=30", TBENCH_AGENTS[0])
+    ## run mutilate    
+    serverOut = runRemoteCommand(f"taskset -c 0 ~/mutilate/mutilate --binary -s {TBENCH_SERVER} --noload --agent={','.join(TBENCH_AGENTS[1:])} --threads=1 --keysize=fb_key --valuesize=fb_value --iadist=fb_ia --update=0.25 --depth=4 --measure_depth=1 --connections=16 --measure_connections=32 --measure_qps=2000 --qps={TARGET_QPS} --time=30", TBENCH_AGENTS[0])
 
     print("Server Output:")
     f = open(f"mutilate.out", "w")
