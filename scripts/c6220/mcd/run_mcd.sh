@@ -25,7 +25,7 @@ function runStatic
 	for qps in ${MQPS}; do	    
 	    for itr in ${MITR}; do
 		for dvfs in ${MDVFS}; do
-		    name="qps${MQPS}_itr${itr}_dvfs${dvfs}_${i}"
+		    name="qps${qps}_itr${itr}_dvfs${dvfs}_${i}"
 		    echo "-----------------------------------------------------------"
 		    echo "[INFO] Run ${name}"
 		    
