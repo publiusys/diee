@@ -46,16 +46,49 @@ def runLocalCommand(com):
     #p1 = Popen(list(filter(None, com.strip().split(' '))), stdout=PIPE, stderr=PIPE)
     return p1
 
-def setITR():
-    global GITR, TBENCH_SERVER
-    p1 = runRemoteCommand(f"ethtool -C enp3s0f0 rx-usecs {GITR}", TBENCH_SERVER)
+def cleanITRlogs():
+    global TBENCH_SERVER
+    p1 = runRemoteCommand(f"cat /proc/ixgbe_stats/core/*", TBENCH_SERVER)
     p1.communicate()
 
+def getITRlogs():
+    global TBENCH_SERVER
+    for i in range(16):
+        p1 = runRemoteCommand(f"cat /proc/ixgbe_stats/core/{i} > ~/mcd.log.{i}", TBENCH_SERVER)
+        p1.communicate()
+    
+def setITR():
+    global GITR
+    global TBENCH_SERVER
+
+    print(TBENCH_SERVER)
+    
+    print(" -------------------- setITR on victim --------------------")
+    ieth = runRemoteCommandGet("ifconfig | grep -B1 10.10.1 | grep -o '^\w*'", TBENCH_SERVER).decode()
+    p1 = runRemoteCommand(f"ethtool -C {ieth} rx-usecs {GITR}", TBENCH_SERVER)
+    p1.communicate()
+
+    p1 = runRemoteCommand(f"ethtool -c {ieth} | grep usecs", TBENCH_SERVER)
+    print(p1.communicate()[0].strip().decode())
+    print("")
+    
 def setDVFS():
-    global GDVFS, TBENCH_SERVER
+    global GDVFS
+    global TBENCH_SERVER
+
+    #p1 = runRemoteCommand(f"~/experiment-scripts/cloudlab_setup/c6220/set_dvfs.sh userspace", TBENCH_SERVER)
+    #p1.communicate()
+    
+    print(" -------------------- setDVFS on victim --------------------")
     s = "0x10000"+GDVFS
     p1 = runRemoteCommand(f"wrmsr -a 0x199 {s}", TBENCH_SERVER)
     p1.communicate()
+    
+    time.sleep(0.5)
+    # print CPU frequency across all cores
+    p1 = runRemoteCommand(f"rdmsr -a 0x199", TBENCH_SERVER)
+    print(p1.communicate()[0].strip().decode())
+    print("")
 
 def run():
     global TARGET_QPS
@@ -81,15 +114,18 @@ def run():
         runRemoteCommands(f"taskset -c 0 ~/mutilate/mutilate --binary -s {TBENCH_SERVER} --loadonly -K fb_key -V fb_value", TBENCH_AGENTS[0])
         time.sleep(1)
 
+    cleanITRlogs()
     ## run mutilate    
-    serverOut = runRemoteCommand(f"taskset -c 0 ~/mutilate/mutilate --binary -s {TBENCH_SERVER} --noload --agent={','.join(TBENCH_AGENTS[1:])} --threads=1 --keysize=fb_key --valuesize=fb_value --iadist=fb_ia --update=0.25 --depth=4 --measure_depth=1 --connections=16 --measure_connections=32 --measure_qps=2000 --qps={TARGET_QPS} --time=30", TBENCH_AGENTS[0])
-
+    serverOut = runRemoteCommand(f"taskset -c 0 ~/mutilate/mutilate --binary -s {TBENCH_SERVER} --noload --agent={','.join(TBENCH_AGENTS[1:])} --threads=1 --keysize=fb_key --valuesize=fb_value --iadist=fb_ia --update=0.25 --depth=4 --measure_depth=1 --connections=16 --measure_connections=32 --measure_qps=2000 --qps={TARGET_QPS} --time=30", TBENCH_AGENTS[0])        
+    
     print("Server Output:")
     f = open(f"mutilate.out", "w")
     for out in serverOut.communicate():
         for line in str(out).strip().split("\\n"):
             f.write(line.strip()+"\n")
     f.close()
+    
+    getITRlogs()
 
     for agent in TBENCH_AGENTS:        
         runRemoteCommandGet("pkill -f mutilate", agent)
@@ -104,14 +140,6 @@ if __name__ == '__main__':
     parser.add_argument("--agents", help="comma delimited agent ip addresses")
     
     args = parser.parse_args()
-    if args.qps:
-        TARGET_QPS = int(args.qps)
-    if args.itr:
-        GITR = args.itr
-        setITR()
-    if args.dvfs:
-        GDVFS = args.dvfs
-        setDVFS()
     if args.server:
         TBENCH_SERVER = args.server
     else:
@@ -123,7 +151,16 @@ if __name__ == '__main__':
     else:
         print(f"Need valid --agents: {args.agents}")
         exit()
+        
+    if args.qps:
+        TARGET_QPS = int(args.qps)
+    if args.itr:
+        GITR = args.itr
+        setITR()
+    if args.dvfs:
+        GDVFS = args.dvfs
+        setDVFS()
             
     print(f"TARGET_QPS={TARGET_QPS} TBENCH_SERVER={TBENCH_SERVER} TBENCH_AGENTS={TBENCH_AGENTS} GITR={GITR} GDVFS={GDVFS}")
     
-    run()
+    #run()
