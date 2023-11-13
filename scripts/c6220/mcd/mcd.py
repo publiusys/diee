@@ -163,4 +163,4 @@ if __name__ == '__main__':
             
     print(f"TARGET_QPS={TARGET_QPS} TBENCH_SERVER={TBENCH_SERVER} TBENCH_AGENTS={TBENCH_AGENTS} GITR={GITR} GDVFS={GDVFS}")
     
-    #run()
+    run()
