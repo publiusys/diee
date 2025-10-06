@@ -6,7 +6,7 @@ CWD=$(pwd)
 GENIUSER=`geni-get user_urn | awk -F+ '{print $4}'`
 
 sudo apt-get update
-sudo apt install msr-tools -y
+sudo apt install msr-tools cpufrequtils python3 python3-pip -y
 
 # disable HyperThreads
 echo off | sudo tee /sys/devices/system/cpu/smt/control
@@ -23,19 +23,20 @@ sudo $CWD/intel_set_irq_affinity.sh -x all ${ieth}
 
 # sets hostname depending on IP
 mip=$(ifconfig | grep -B1 10.10.1 | grep inet | grep -oP 'inet \K(\d+\.\d+\.\d+\.\d+)')
-case $mip in
-
+case $mip in    
     "10.10.1.1")
-	sudo hostname client-$mip
+	v=$(echo $mip | cut -d. -f4)
+	sudo hostname client-$v
 	;;
 
     "10.10.1.2")
-	sudo hostname server-$mip
+	v=$(echo $mip | cut -d. -f4)
+	sudo hostname server-$v
 	;;
     
     *)
-	sudo hostname agent-$mip
-	#echo -n "Unknown IP: ${ieth}"
+	v=$(echo $mip | cut -d. -f4)
+	sudo hostname agent-$v
 	;;
 esac
 
@@ -88,5 +89,5 @@ sudo ls -l /dev/cpu/*/msr
 sudo chmod g+rw /dev/cpu/*/msr
 sudo usermod -aG msr $GENIUSER
 
-echo "🔴🔴  Re-login for msr group changes to take effect 🔴🔴"
+echo "🔴🔴  Exit and relogin to this node for msr group changes to take effect 🔴🔴"
 sudo newgrp msr
