@@ -6,7 +6,7 @@ CWD=$(pwd)
 GENIUSER=`geni-get user_urn | awk -F+ '{print $4}'`
 
 sudo apt-get update
-sudo apt install msr-tools cpufrequtils python3 python3-pip -y
+sudo apt install msr-tools cpufrequtils python3 python3-pip netperf openjdk-8-jdk-headless libopencv-dev python3-opencv uuid-dev autotools-dev automake tcl libtool libreadline-dev libgtop2-dev bison swig scons libevent-dev gengetopt libzmq3-dev libevent-dev -y
 
 # disable HyperThreads
 echo off | sudo tee /sys/devices/system/cpu/smt/control
@@ -60,6 +60,9 @@ sudo ufw allow from 10.10.1.7
 sudo ufw allow from 10.10.1.8
 sudo ufw allow from 10.10.1.9
 sudo ufw allow from 10.10.1.10
+
+sudo ufw allow 8080
+sudo ufw allow 11211
 
 # deny everything else
 sudo ufw default allow outgoing
